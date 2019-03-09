@@ -1,0 +1,143 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+我的
+{% endblock %}
+
+{% block extcss %}
+ <link rel="stylesheet" href="{% static 'mine/css/mine.css' %}">
+{% endblock %}
+
+
+
+{% block content %}
+<div class="mine">
+ <div class="user-wrapper">
+  <div class="user-img">
+   <img src="/static/mine/img/{{ user.img | default:"axf.png" }}" alt="">
+  </div>
+  <div class="user-content">
+   <p>
+    <span class="glyphicon glyphicon-user"></span>
+    <a href="{% url 'axf:login' %}">{{ user.name | default:'未登陆' }}</a>
+   </p>
+   <p>
+    <span class="glyphicon glyphicon-flash"></span>
+   等级:无
+   </p>
+   <a href="{% url 'axf:register' %}" class="register">注册</a>
+  </div>
+ </div>
+
+ <div class="collect">
+  <span class="glyphicon glyphicon-heart">
+
+  </span>
+  <i>商品收藏</i>
+ </div>
+
+ <section class="other">
+  <section class="my">
+   <span>我的订单</span>
+   <a href="">查看全部订单
+    <i class="glyphicon glyphicon-chevron-right"></i></a>
+  </section>
+
+  <section>
+   <ul>
+    <li>
+     <dl>
+      <dt>
+      <span class="glyphicon glyphicon-usd">
+      <dd>待付款</dd>
+      </span>
+      </dt>
+     </dl>
+    </li>
+    <li>
+     <dl>
+      <dt>
+      <span class="glyphicon glyphicon-envelope">
+      <dd>待收货</dd>
+      </span>
+      </dt>
+     </dl>
+    </li>
+    <li>
+     <dl>
+      <dt>
+      <span class="glyphicon glyphicon-pencil">
+      <dd>待评价</dd>
+      </span>
+      </dt>
+     </dl>
+    </li>
+    <li>
+     <dl>
+      <dt>
+      <span class="glyphicon glyphicon-retweet">
+      <dd>退款/售后</dd>
+      </span>
+      </dt>
+     </dl>
+    </li>
+
+   </ul>
+  </section>
+
+  <section>
+   <ul>
+    <li>
+     <dl>
+      <dt>
+      <span class="glyphicon glyphicon-credit-card">
+      <dd>优惠券</dd>
+      </span>
+      </dt>
+     </dl>
+    </li>
+    <li>
+     <dl>
+      <dt>
+      <span class="glyphicon glyphicon-home">
+      <dd>收获地址</dd>
+      </span>
+      </dt>
+     </dl>
+    </li>
+    <li>
+     <dl>
+      <dt>
+      <span class="glyphicon glyphicon-phone-alt">
+      <dd>客服/反馈</dd>
+      </span>
+      </dt>
+     </dl>
+    </li>
+    <li>
+     <dl>
+      <dt>
+      <span class="glyphicon glyphicon-certificate">
+      <dd>关于我们</dd>
+      </span>
+      </dt>
+     </dl>
+    </li>
+
+   </ul>
+  </section>
+
+  {% if user %}
+  <section class="quit">
+   <a href="{% url 'axf:logout' %}">退出</a>
+  </section>
+ {% endif %}
+ </section>
+</div>
+
+{% endblock %}
+
+{% block extjs %}
+<script src="{% static 'mine/js/mine.js' %}"></script>
+{% endblock %}
