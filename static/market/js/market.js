@@ -88,7 +88,33 @@ $(function () {
         categoryViewHide()
         categoryShow = false
     })
+    //隐藏(减号跟商品数量)
+    $('.bt-wrapper>.glyphicon-minus').hide()
+    $('.bt-wrapper>i').hide()
 
+    //点击加号添加操作事件
+    $('.bt-wrapper>.glyphicon-plus').click(function () {
+       console.log('点击+')   //验证点击是否可以触发
+        //添加购物车需要传递用户跟商品，（需先登陆）
+        //请求数据  每个按钮身上都对应的商品id属性
+         request_data = {
+            'goodsid': $(this).attr('data-goodsid')
+        }
+
+        $.get('/axf/addcart/', request_data, function (response) {
+            console.log(response)
+
+            if (response.status == -1){ // 未登录
+
+                // 设置cookie
+                $.cookie('back', 'market', {expires: 3, path: '/'})
+
+                window.open('/axf/login/', '_self')
+
+
+            }
+        })
+    })
 
 })
 

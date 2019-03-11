@@ -2,12 +2,15 @@ import hashlib
 import random
 import time
 
-from django.shortcuts import render
-from app.models import Wheel,Nav,Mustbuy,Shop,Mainshow,Foodtypes,Goods,User
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
+from app.models import Wheel,Nav,Mustbuy,Shop,Mainshow,Foodtypes,Goods,User,Cart
 
 # Create your views here.
 from django_redis import cache
 from django.core.cache import cache
+
+
 
 def home(request):
     #轮播图
@@ -105,7 +108,34 @@ def mine(request):
     return render(request,'mine/mine.html',context={'user':user})
 
 def login(request):
-    return render(request,'mine/login.html')
+    if request.method == 'GET':
+        return render(request, 'mine/login.html')
+    elif request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        back = request.COOKIES.get('back')   #重定向位置
+        print(back)
+        user = User.objects.filter(email=email)
+        if user.exists():
+            user = user.first()
+            if user.password == generate_password(password):
+
+                token = generate_token()   #更新token
+                cache.set(token,user.id,60*60*24*3)  #状态保持
+                #传递客户端
+                request.session['token']=token
+                # return redirect('axf:mine')
+
+                if back == 'mine':
+                    return redirect('axf:mine')
+                else:
+                    return redirect('axf:marketbase')
+
+            else:
+                return render(request, 'mine/login.html', context={'ps_err': '密码错误'})
+        else:
+            return render(request,'mine/login.html',context={'user_err':'用户不存在' })
+    # return render(request,'mine/mine.html')
 
 def logout(request):
     request.session.flush()
@@ -144,3 +174,42 @@ def register(request):
 
         request.session['token'] = token
     return render(request,'mine/mine.html')
+
+
+def addcart(request):
+    # 获取token
+    token = request.session.get('token')
+
+    # 响应数据
+    response_data = {}
+
+    # 缓存
+    if token:
+        userid = cache.get(token)
+        # print(userid)    #获取用户id
+        if userid:  # 已经登录
+            user = User.objects.get(pk=userid)
+            goodsid = request.GET.get('goodsid')
+            goods = Goods.objects.get(pk=goodsid)
+            # print(user,goodsid)  #点击商品后查看是否能获取对应id
+            # 商品不存在: 添加新记录  商品存在: 修改number
+            carts = Cart.objects.filter(user=user).filter(goods=goods)
+            if carts.exists():
+                cart = carts.first()
+                cart.number = cart.number + 1
+                cart.save()
+            else:
+                cart = Cart()
+                cart.user = user
+                cart.goods = goods
+                cart.number = 1
+                cart.save()
+
+            response_data['status'] = 1  #添加成功
+            response_data['msg'] = '添加 {} 购物车成功: {}'.format(cart.goods.productlongname, cart.number)
+
+            return JsonResponse(response_data)
+            # return HttpResponse('添加商品到购物车')
+    response_data['status'] = -1   #未登录状态
+    response_data['msg'] = '请登录后操作'
+    return JsonResponse(response_data)

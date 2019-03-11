@@ -14,5 +14,5 @@ urlpatterns = [
     url(r'^login/$',views.login,name='login'),   #登陆
     url(r'^logout/$', views.logout, name='logout'),  # 注销
     url(r'^register/$', views.register, name='register'),  # 注册
-
+    url(r'^addcart/$', views.addcart, name='addcart'),  # 添加到购物车
     ]

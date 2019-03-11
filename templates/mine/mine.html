@@ -20,7 +20,7 @@
   <div class="user-content">
    <p>
     <span class="glyphicon glyphicon-user"></span>
-    <a href="{% url 'axf:login' %}">{{ user.name | default:'未登陆' }}</a>
+    <a id="login-i">{{ user.name | default:'未登陆' }}</a>
    </p>
    <p>
     <span class="glyphicon glyphicon-flash"></span>
