@@ -213,3 +213,21 @@ def addcart(request):
     response_data['status'] = -1   #未登录状态
     response_data['msg'] = '请登录后操作'
     return JsonResponse(response_data)
+
+def checkemail(request):
+    email = request.GET.get('email')
+
+    # 去数据库中查找
+    users = User.objects.filter(email=email)
+    if users.exists():  # 账号被占用  1可用， 0不可用
+        response_data = {
+            'status': 0,
+            'msg': '账号被占用!'
+        }
+    else:   # 账号可用
+        response_data = {
+            'status':1,
+            'msg': '账号可用!'
+        }
+    return JsonResponse(response_data)
+

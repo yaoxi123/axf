@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^logout/$', views.logout, name='logout'),  # 注销
     url(r'^register/$', views.register, name='register'),  # 注册
     url(r'^addcart/$', views.addcart, name='addcart'),  # 添加到购物车
+    url(r'^checkemail/$', views.checkemail, name='checkemail'), # 账号验证
     ]
