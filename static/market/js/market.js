@@ -89,8 +89,19 @@ $(function () {
         categoryShow = false
     })
     //隐藏(减号跟商品数量)
-    $('.bt-wrapper>.glyphicon-minus').hide()
-    $('.bt-wrapper>i').hide()
+    // $('.bt-wrapper>.glyphicon-minus').hide()
+    // $('.bt-wrapper>i').hide()
+    $('.bt-wrapper .num').each(function () {
+        var num = parseInt($(this).html())
+        if (num){   // 有数值
+            $(this).prev().show()
+            $(this).show()
+        } else {    // 没有数值
+            $(this).prev().hide()
+            $(this).hide()
+        }
+    })
+
 
     //点击加号添加操作事件
     $('.bt-wrapper>.glyphicon-plus').click(function () {
@@ -100,7 +111,7 @@ $(function () {
          request_data = {
             'goodsid': $(this).attr('data-goodsid')
         }
-
+        var $that = $(this)
         $.get('/axf/addcart/', request_data, function (response) {
             console.log(response)
 
@@ -111,6 +122,35 @@ $(function () {
 
                 window.open('/axf/login/', '_self')
 
+            } else if (response.status ==1) {
+                // 操作按钮上下标签prev()兄弟节点
+                // $('.bt-wrapper.num').html(response.number)
+                //当前函数是ajax触发，$（this）指向ajax
+                $that.prev().html(response.number)//设置个数
+
+                // console.log($(this).prev())
+                $that.prev().show()
+                $that.prev().prev().show()
+            }
+        })
+    })
+
+    //点击减操作
+    $('.bt-wrapper>.glyphicon-minus').click(function () {
+        var $that = $(this)
+        request_data = {
+            'goodsid':$(this).attr('data-goodsid')  //自定义属性goods.id保存在
+        }
+
+        $.get('/axf/subcart/',request_data,function(response){
+            console.log(response)
+            if (response.status == 1){
+                if (response.number){
+                    $that.next().html(response.number)
+                }else{
+                    $that.next().hide()
+                    $that.hide()
+                }
 
             }
         })
