@@ -111,8 +111,22 @@ def market(request, childid='0' ,sortid='0'):
 
 def cart(request):
     # carts =Cart.objects.all()   #获取所有购物车信息
-    carts = Cart.objects.filter(number__gt=0)
-    return render(request,'cart/cart.html',context={'carts':carts})
+    # carts = Cart.objects.filter(number__gt=0)
+    # return render(request,'cart/cart.html',context={'carts':carts})
+    token = request.session.get('token')
+    userid = cache.get(token)
+    if userid:  # 有登录才显示
+        user = User.objects.get(pk=userid)
+        carts = user.cart_set.filter(number__gt=0)
+
+        isall = True
+        for cart in carts:
+            if not cart.isselect:
+                isall = False
+
+        return render(request, 'cart/cart.html', context={'carts': carts, 'isall': isall})
+    else:  # 未登录不显示
+        return render(request, 'cart/no-login.html')
 
 def mine(request):
     token = request.session.get('token')
