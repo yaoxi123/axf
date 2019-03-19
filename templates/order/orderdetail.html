@@ -1,7 +1,9 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
 {% block footer %}
 {% endblock %}
+
 
 {% block title %}
     订单详情
@@ -22,6 +24,9 @@
             {% endfor %}
         </ul>
 
-        <button class="btn btn-default">支付</button>
+        <button class="btn btn-default" id="alipay" data-orderid="{{ order.id }}">支付</button>
     </div>
+{% endblock %}
+{% block extjs %}
+    <script src="{% static 'order/js/orderdetail.js' %}"></script>
 {% endblock %}
